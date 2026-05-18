@@ -1,1 +1,37 @@
+workflows:
+  android-workflow:
+    name: Namma-Railu Buddy Android Build
+    max_build_duration: 60
+    environment:
+      java: 17
+      vars:
+        PACKAGE_NAME: "com.nammarailu.app"
 
+    scripts:
+      - name: Set up google-services.json
+        script: |
+          echo $GOOGLE_SERVICES_JSON > app/google-services.json
+
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      - name: Make gradlew executable
+        script: |
+          chmod +x gradlew
+
+      - name: Build Debug APK
+        script: |
+          ./gradlew assembleDebug --stacktrace
+
+    artifacts:
+      - app/build/outputs/apk/debug/app-debug.apk
+      - app/build/outputs/**/*.apk
+
+    publishing:
+      email:
+        recipients:
+          - your@email.com        # ← Replace with your email
+        notify:
+          success: true
+          failure: true
